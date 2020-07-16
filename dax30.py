@@ -2,6 +2,8 @@ import datetime as dt
 import yfinance as yf
 import streamlit as st
 
+st.title('DAX30 Stock Prices')
+
 st.sidebar.header('User Input Features')
 
 def user_input_features():
@@ -57,10 +59,8 @@ def user_input_features():
 #define the ticker symbol
 tickerSymbol, company, start_date, end_date = user_input_features()
 
-st.write("""
-# DAX30 Stock Prices
-Shown are the stock closing price and volume for 
-""" + company + '!')
+#write subheader
+st.write('Shown are the stock closing price and volume for ' + company + '!')
 
 #get data on this ticker
 tickerData = yf.Ticker(tickerSymbol)
