@@ -114,3 +114,5 @@ for idx in tickerDf.index:
     #time.sleep(0.15)
        
 status_text.text('Done!')
+
+st.button("Re-run")
