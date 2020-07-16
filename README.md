@@ -4,4 +4,5 @@ Playground for several webapps built with streamlit.
 
 Requirements:
 ```
-pip install streamlit
+$ pip install streamlit
+```
