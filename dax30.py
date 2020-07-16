@@ -1,5 +1,8 @@
 import datetime as dt
+import numpy as np
+import time
 import yfinance as yf
+import altair as alt
 import streamlit as st
 
 st.title('DAX30 Stock Prices')
@@ -47,7 +50,7 @@ def user_input_features():
     ticker_symbol = dax_companies[company]
     
     today = dt.date.today()
-    start_date = st.sidebar.date_input('Start date', dt.datetime(2010, 5, 31))
+    start_date = st.sidebar.date_input('Start date', dt.datetime(2020, 1, 1))
     end_date = st.sidebar.date_input('End date', today)
     if start_date < end_date:
         st.sidebar.success('Start date: `%s`\n\nEnd date:`%s`' % (start_date, end_date))
@@ -60,14 +63,54 @@ def user_input_features():
 tickerSymbol, company, start_date, end_date = user_input_features()
 
 #write subheader
-st.write('Shown are the stock closing price and volume for ' + company + '!')
+#st.write('Ovarall DAX30 performance between ' + start_date.strftime('%m/%d/%Y') + ' and ' + end_date.strftime('%m/%d/%Y'))
 
-#get data on this ticker
+#get data for DAX performance index
+if st.checkbox('Show overall DAX30 performance'):
+    st.subheader('DAX30 performance between ' + start_date.strftime('%m/%d/%Y') + ' and ' + end_date.strftime('%m/%d/%Y'))
+    dax = yf.Ticker('^GDAXI')
+    daxDf = dax.history(period='1d', start=start_date, end=end_date)
+
+    dax_chart = alt.Chart(daxDf.reset_index()).mark_line(color='green').encode(
+            x=alt.X('Date:T', title=' '),
+            y=alt.Y('Close:Q', title=' '),
+            ).properties(
+                width=600,
+                height=370
+            )
+    chart = st.altair_chart(dax_chart)
+    
+
+
+#write subheader
+st.subheader(company + ' closing price and volume between '+ start_date.strftime('%m/%d/%Y') + ' and ' + end_date.strftime('%m/%d/%Y'))
+
+#get data on selected ticker
 tickerData = yf.Ticker(tickerSymbol)
 
 #get the historical prices for this ticker
 tickerDf = tickerData.history(period='1d', start=start_date, end=end_date)
-# Open	High	Low	Close	Volume	Dividends	Stock Splits
 
 st.line_chart(tickerDf.Close)
 st.line_chart(tickerDf.Volume)
+
+
+status_text = st.empty()
+close = st.line_chart(tickerDf.loc[start_date:start_date, 'Close'])
+volume = st.line_chart(tickerDf.loc[start_date:start_date, 'Volume'])
+i = 0
+
+for idx in tickerDf.index:
+    new_close = tickerDf.loc[:idx, 'Close']
+    new_volume = tickerDf.loc[:idx, 'Volume']
+
+
+    # Append data to the chart.
+    close.add_rows(new_close)
+    volume.add_rows(new_volume)
+
+    i += 1
+    status_text.text('{:.2f}% Complete'.format(i/len(tickerDf)*100))
+    #time.sleep(0.15)
+       
+status_text.text('Done!')
