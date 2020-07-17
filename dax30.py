@@ -2,7 +2,6 @@ import altair as alt
 import datetime as dt
 import numpy as np
 import streamlit as st
-import time
 import yfinance as yf
 
 
@@ -67,7 +66,6 @@ def ticker_graph_dynamic():
         #calculate and display progress
         i += 1
         status_text.text('{:.2f}% Complete'.format(i/len(tickerDf)*100))
-        #time.sleep(0.15)
 
     status_text.text('Done!')
 
