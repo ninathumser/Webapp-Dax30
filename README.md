@@ -16,4 +16,4 @@ Files included in this repository:
 - Procfile: file declaring what commands are to be run on start up
 - setup.sh: helps create the necessary environment for the streamlit app to run
 - requirements.txt: file containing necessary libraries to create the environment
-- dax30.py: code for data and webapp
+- dax30.py: code for data extraction, preparation and webapp
